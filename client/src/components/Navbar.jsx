@@ -60,9 +60,16 @@ const Navbar = () => {
 
             <div className='flex max-sm:flex-col items-start sm:items-center gap-6'>
 
-                <button onClick={()=> isOwner ?  navigate('/owner') : changeRole()} className="cursor-pointer">
+                <button onClick={() => {
+                        if (!user) {
+                            toast.error("Please login to list your car");
+                            return;
+                        }
+                        isOwner ? navigate('/owner') : changeRole();}} 
+                    className="cursor-pointer">
                     {isOwner ? 'Dashboard' : 'List Cars'}
                 </button>
+
 
                 <button onClick={()=>{user ? logout() :  setShowLogin(true)}} className="cursor-pointer px-8 py-2 bg-primary 
                 hover:bg-primary-dull transition-all text-white rounded-lg">
