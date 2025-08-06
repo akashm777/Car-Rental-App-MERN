@@ -14,6 +14,12 @@ const Login = () => {
     const onSubmitHandler = async (e)=> {
         try{
             e.preventDefault();
+
+            if (password.length < 8) {
+                toast.error("Password must be at least 8 characters");
+                return;
+            }
+
             const {data} =  await axios.post(`/api/user/${state}`, {name, email, password});
 
             if(data.success){

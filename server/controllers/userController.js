@@ -16,13 +16,6 @@ export const registerUser = async (req, res)=>{
     try{
         const {name, email, password} = req.body;
 
-        if(password.length < 8){
-            return res.json({
-                success : false,
-                message : 'password must be minimum of 8 chars'
-            })
-        }
-
         const userExists = await User.findOne({email})
         if(userExists){
             return res.json({
