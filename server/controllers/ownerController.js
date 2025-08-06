@@ -10,14 +10,14 @@ export const changeRoleToOwner = async(req, res) =>{
         const {_id} = req.user;
 
         await User.findByIdAndUpdate(_id, {role : "owner"});
-        res.send({
+        return res.json({
             success : true,
             message : "Now you can list cars"
         })
     }
     catch(e){
         console.error(e.message);
-        res.send({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -54,7 +54,7 @@ export const addCar = async (req, res)=>{
         const image = optimizedImageUrl;
         await Car.create({...car, owner: _id, image});
 
-        res.json({
+        return res.json({
             success : true,
             message : "Car Added"
         })
@@ -62,7 +62,7 @@ export const addCar = async (req, res)=>{
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -76,14 +76,14 @@ export const getOwnerCars = async (req, res)=>{
         const {_id} = req.user;
         const cars = await Car.find({owner: _id});
 
-        res.json({
+        return res.json({
             success : true,
             cars
         })
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -116,7 +116,7 @@ export const toggleCarAvailability = async (req, res)=>{
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -150,7 +150,7 @@ export const deleteCar = async (req, res)=>{
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -163,7 +163,7 @@ export const getDashboardData = async (req, res)=>{
     try{
         const {_id, role} = req.user;
         if(role !== "owner"){
-            return res.status(403).json({
+            return res.json({
                 success : false,
                 message : "Unauthorized"
             })
@@ -193,7 +193,7 @@ export const getDashboardData = async (req, res)=>{
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -234,6 +234,6 @@ export const updateUserImage = async (req, res) => {
     }
     catch(error){
     console.error(error.message);
-    res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 };

@@ -26,7 +26,7 @@ export const checkAvailabilityOfCar = async (req, res)=>{
 
         // Check if pickup date is in the past
         if (pickup < today) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Pickup date cannot be in the past"
             });
@@ -34,7 +34,7 @@ export const checkAvailabilityOfCar = async (req, res)=>{
 
         // Check if return date is before pickup date
         if (return_date <= pickup) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Return date must be after pickup date"
             });
@@ -43,7 +43,7 @@ export const checkAvailabilityOfCar = async (req, res)=>{
         // Check if booking is for more than 30 days
         const daysDiff = Math.ceil((return_date - pickup) / (1000 * 60 * 60 * 24));
         if (daysDiff > 30) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Booking cannot exceed 30 days"
             });
@@ -68,7 +68,7 @@ export const checkAvailabilityOfCar = async (req, res)=>{
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -90,7 +90,7 @@ export const createBooking = async (req, res)=>{
 
         // Check if pickup date is in the past
         if (pickup < today) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Pickup date cannot be in the past"
             });
@@ -98,7 +98,7 @@ export const createBooking = async (req, res)=>{
 
         // Check if return date is before pickup date
         if (return_date <= pickup) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Return date must be after pickup date"
             });
@@ -107,7 +107,7 @@ export const createBooking = async (req, res)=>{
         // Check if booking is for more than 30 days
         const daysDiff = Math.ceil((return_date - pickup) / (1000 * 60 * 60 * 24));
         if (daysDiff > 30) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Booking cannot exceed 30 days"
             });
@@ -115,7 +115,7 @@ export const createBooking = async (req, res)=>{
 
         const isAvailable = await checkAvailability(car, pickupDate, returnDate);
         if(!isAvailable){
-            return res.status(400).json({
+            return res.json({
                 success : false,
                 message : "Car is not Available"
             })
@@ -146,7 +146,7 @@ export const createBooking = async (req, res)=>{
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -160,7 +160,7 @@ export const getUserBookings = async (req, res) => {
     const { _id } = req.user;
     const bookings = await Booking.find({ user: _id }).populate("car").sort({ createdAt: -1 });
 
-    res.json({ 
+    return res.json({ 
         success: true, 
         bookings 
     });
@@ -168,7 +168,7 @@ export const getUserBookings = async (req, res) => {
   } 
   catch (error) {
     console.error(error.message);
-    res.json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 }
 
@@ -177,7 +177,7 @@ export const getUserBookings = async (req, res) => {
 export const getOwnerBookings = async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).json({
+      return res.json({
         success: false,
         message: "Unauthorized"
       });
@@ -186,11 +186,11 @@ export const getOwnerBookings = async (req, res) => {
     const bookings = await Booking.find({ owner: req.user._id })
       .populate("car user").select("-user.password").sort({ createdAt: -1 });
 
-    res.json({ success: true, bookings });
+    return res.json({ success: true, bookings });
 
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 };
 
@@ -204,7 +204,7 @@ export const changeBookingStatus = async (req, res) => {
         const booking = await Booking.findById(bookingId);
 
         if (booking.owner.toString() !== _id.toString()) {
-            return res.status(403).json({
+            return res.json({
                 success: false,
                 message: "Unauthorized"
             });
@@ -213,10 +213,10 @@ export const changeBookingStatus = async (req, res) => {
         booking.status = status;
         await booking.save();
 
-        res.json({ success: true, message: "Status Updated" });
+        return res.json({ success: true, message: "Status Updated" });
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({ success: false, message: e.message });
+        return res.json({ success: false, message: e.message });
     }
 }

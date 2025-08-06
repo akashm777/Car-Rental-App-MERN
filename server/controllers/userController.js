@@ -16,16 +16,16 @@ export const registerUser = async (req, res)=>{
     try{
         const {name, email, password} = req.body;
 
-        if(!name || !email || !password || password.length < 8){
-            return res.status(400).json({
+        if(password.length < 8){
+            return res.json({
                 success : false,
-                message : 'Fill all the fields'
+                message : 'password must be minimum of 8 chars'
             })
         }
 
         const userExists = await User.findOne({email})
         if(userExists){
-            return res.status(400).json({
+            return res.json({
                 success : false,
                 message : 'User already exists'
             })
@@ -35,14 +35,14 @@ export const registerUser = async (req, res)=>{
         const user = await User.create({name, email, password: hashedPassword});
         
         const token = generateToken(user._id.toString());
-        res.json({
+        return res.json({
             success: true,
             token,
         })
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        res.json({
             success : false,
             message : e.message
         })
@@ -57,7 +57,7 @@ export const loginUser = async (req, res) =>{
         const {email, password} = req.body;
         const user = await User.findOne({email});
         if(!user){
-            return res.status(404).json({
+            return res.json({
                 success : false,
                 message : "User not found"
             })
@@ -65,21 +65,21 @@ export const loginUser = async (req, res) =>{
 
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
-            return res.status(401).json({
+            return res.json({
                 success : false,
                 message : "Invalid Credentials"
             })
         }
 
         const token = generateToken(user._id.toString());
-        res.json({
+        return res.json({
             success: true,
             token,
         })
     } 
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        res.json({
             success : false,
             message : e.message
         })
@@ -91,14 +91,14 @@ export const loginUser = async (req, res) =>{
 export const getUserData = async (req, res) =>{
     try{
         const {user} = req;
-        res.json({
+        return res.json({
             success : true,
             user
         })
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        return res.json({
             success : false,
             message : e.message
         })
@@ -110,14 +110,14 @@ export const getUserData = async (req, res) =>{
 export const getCars = async (req, res) =>{
     try{
         const cars = await Car.find({isAvailable: true});
-        res.json({
+        return res.json({
             success : true,
             cars
         })
     }
     catch(e){
         console.error(e.message);
-        res.status(500).json({
+        res.json({
             success : false,
             message : e.message
         })
