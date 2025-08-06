@@ -25,6 +25,12 @@ const AddCar = () => {
     const [isLoading, setIsLoading] = useState(false);
     const onSubmitHandler = async (e)=> {
         e.preventDefault();
+
+        if(!image){
+            toast.error("Upload your car Image");
+            return null;
+        }
+
         if(isLoading){
             return null;
         }
@@ -122,7 +128,7 @@ const AddCar = () => {
                     <label>Category</label>
                     <select onChange={e=> setCar({...car, category: e.target.value})} 
                     value={car.category} className='px-3 py-2 mt-1 border border-borderColor 
-                    rounded-md outline-none'>
+                    rounded-md outline-none' required>
                         <option value="">Select a category</option>
                         <option value="Sedan">Sedan</option>
                         <option value="SUV">SUV</option>
@@ -138,7 +144,7 @@ const AddCar = () => {
                     <label>Transmission</label>
                     <select onChange={e=> setCar({...car, transmission: e.target.value})} 
                     value={car.transmission} className='px-3 py-2 mt-1 border border-borderColor 
-                    rounded-md outline-none'>
+                    rounded-md outline-none' required>
                         <option value="">Select a transmission</option>
                         <option value="Automatic">Automatic</option>
                         <option value="Manual">Manual</option>
@@ -150,7 +156,7 @@ const AddCar = () => {
                     <label>Fuel Type</label>
                     <select onChange={e=> setCar({...car, fuel_type: e.target.value})} 
                     value={car.fuel_type} className='px-3 py-2 mt-1 border border-borderColor 
-                    rounded-md outline-none'>
+                    rounded-md outline-none' required>
                         <option value="">Select a fuel type</option>
                         <option value="Gas">Gas</option>
                         <option value="Diesel">Diesel</option>
@@ -174,7 +180,7 @@ const AddCar = () => {
                 <label>Location</label>
                 <select onChange={e=> setCar({...car, location: e.target.value})} 
                 value={car.location} className='px-3 py-2 mt-1 border border-borderColor 
-                rounded-md outline-none'>
+                rounded-md outline-none' required>
                     <option value="">Select a Location</option>
                     <option value="New York">New York</option>
                     <option value="Los Angeles">Los Angeles</option>
